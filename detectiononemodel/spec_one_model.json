@@ -1,0 +1,304 @@
+{
+    "target": "c++",
+    "imports": [
+        "generatedCode/Code.cpp",
+        "nlohmann/json.hpp"
+    ],
+    "type_definitions": {
+        "schemas": [],
+        "native_types": {
+            "window1*": {
+                "type_symbol": "window/window.h",
+                "destructor": "~window()"
+            },
+            "std::map<int,std::vector<int>>": {
+                "type_symbol": "map",
+                "destructor": "~map()"
+            },
+            "kde*": {
+                "type_symbol": "KDE/kde.h",
+                "destructor": "~kde()"
+            },
+            "double": {
+                "type_symbol": "double",
+                "destructor": "delete"
+            },
+            "json": {
+                "type_symbol": "json",
+                "destructor": "json"
+            },
+            "std::vector<tuple<std::string,std::string>> ": {
+                "type_symbol": "std::vector<tuple<std::string,std::string>> ",
+                "destructor": "std::vector<tuple<std::string,std::string>> "
+            }
+        },
+        "events": []
+    },
+    "top_level_astds": [
+        {
+            "name": "detectionOneModel",
+            "parameters": [
+                {
+                    "name": "window_parameters",
+                    "type": "json",
+                    "domain": {
+                        "type": "UnboundedDomain"
+                    }
+                },
+                {
+                    "name": "threshold",
+                    "type": "double",
+                    "domain": {
+                        "type": "UnboundedDomain"
+                    }
+                }
+            ],
+            "type": "QInterleave",
+            "invariant": "",
+            "typed_astd": {
+                "attributes": [
+                    {
+                        "name": "alerts",
+                        "type": "std::vector<tuple<std::string,std::string>>",
+                        "initial_value": "{}"
+                    }
+                ],
+                "code": "",
+                "interruptCode": "",
+                "quantified_variable": {
+                    "name": "userId",
+                    "type": "int",
+                    "domain": {
+                        "type": "UnboundedDomain"
+                    }
+                },
+                "sub_astd": {
+                    "name": "Detection_Per_User",
+                    "type": "Flow",
+                    "invariant": "",
+                    "typed_astd": {
+                        "attributes": [
+                            {
+                                "name": "window",
+                                "type": "window*",
+                                "initial_value": "new window(window_parameters)"
+                            },
+                            {
+                                "name": "data",
+                                "type": "std::map<int,std::vector<int>>",
+                                "initial_value": "{}"
+                            }
+                        ],
+                        "code": "",
+                        "interruptCode": "",
+                        "left_astd": {
+                            "name": "Detector_instance",
+                            "type": "Flow",
+                            "typed_astd": {
+                                "attributes": [
+                                    {
+                                        "name": "detector",
+                                        "type": "kde*",
+                                        "initial_value": "new kde(threshold)"
+                                    }
+                                ],
+                                "code": "",
+                                "interruptCode": "",
+                                "left_astd": {
+                                    "name": "scoring",
+                                    "type": "Automaton",
+                                    "typed_astd": {
+                                        "attributes": [],
+                                        "code": "",
+                                        "interruptCode": "",
+                                        "states": [
+                                            {
+                                                "name": "S0",
+                                                "astd": {
+                                                    "type": "Elem",
+                                                    "typed_astd": {}
+                                                },
+                                                "entry_code": "",
+                                                "stay_code": "",
+                                                "exit_code": ""
+                                            }
+                                        ],
+                                        "transitions": [
+                                            {
+                                                "arrow_type": "Local",
+                                                "arrow": {
+                                                    "from_state_name": "S0",
+                                                    "to_state_name": "S0"
+                                                },
+                                                "event_template": {
+                                                    "label": "e",
+                                                    "parameters": [
+                                                        {
+                                                            "parameter_kind": "Expression",
+                                                            "parameter": "userId"
+                                                        },
+                                                        {
+                                                            "parameter_kind": "Capture",
+                                                            "parameter": {
+                                                                "variable_name": "eventDate",
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        {
+                                                            "parameter_kind": "Capture",
+                                                            "parameter": {
+                                                                "variable_name": "eventId",
+                                                                "type": "string"
+                                                            }
+                                                        }
+                                                    ],
+                                                    "when": []
+                                                },
+                                                "guard": "",
+                                                "action": "{detector->score_partial(eventDate,eventId,alerts)}",
+                                                "step": false,
+                                                "from_final_state_only": false
+                                            }
+                                        ],
+                                        "shallow_final_state_names": [
+                                            "S0"
+                                        ],
+                                        "deep_final_state_names": [],
+                                        "initial_state_name": "S0"
+                                    }
+                                },
+                                "right_astd": {
+                                    "name": "training",
+                                    "type": "Automaton",
+                                    "typed_astd": {
+                                        "attributes": [],
+                                        "code": "",
+                                        "interruptCode": "",
+                                        "states": [
+                                            {
+                                                "name": "S0",
+                                                "astd": {
+                                                    "type": "Elem",
+                                                    "typed_astd": {}
+                                                },
+                                                "entry_code": "",
+                                                "stay_code": "",
+                                                "exit_code": ""
+                                            }
+                                        ],
+                                        "transitions": [
+                                            {
+                                                "arrow_type": "Local",
+                                                "arrow": {
+                                                    "from_state_name": "S0",
+                                                    "to_state_name": "S0"
+                                                },
+                                                "event_template": {
+                                                    "label": "e",
+                                                    "parameters": [
+                                                        {
+                                                            "parameter_kind": "Expression",
+                                                            "parameter": "userId"
+                                                        },
+                                                        {
+                                                            "parameter_kind": "Capture",
+                                                            "parameter": {
+                                                                "variable_name": "eventDate",
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        {
+                                                            "parameter_kind": "Capture",
+                                                            "parameter": {
+                                                                "variable_name": "eventId",
+                                                                "type": "string"
+                                                            }
+                                                        }
+                                                    ],
+                                                    "when": []
+                                                },
+                                                "guard": "",
+                                                "action": "{window->fit_partial(detector,data)}",
+                                                "step": false,
+                                                "from_final_state_only": false
+                                            }
+                                        ],
+                                        "shallow_final_state_names": [
+                                            "S0"
+                                        ],
+                                        "deep_final_state_names": [],
+                                        "initial_state_name": "S0"
+                                    }
+                                }
+                            }
+                        },
+                        "right_astd": {
+                            "name": "Data_Parser",
+                            "type": "Automaton",
+                            "typed_astd": {
+                                "attributes": [],
+                                "code": "",
+                                "interruptCode": "",
+                                "states": [
+                                    {
+                                        "name": "S0",
+                                        "astd": {
+                                            "type": "Elem",
+                                            "typed_astd": {}
+                                        },
+                                        "entry_code": "",
+                                        "stay_code": "",
+                                        "exit_code": ""
+                                    }
+                                ],
+                                "transitions": [
+                                    {
+                                        "arrow_type": "Local",
+                                        "arrow": {
+                                            "from_state_name": "S0",
+                                            "to_state_name": "S0"
+                                        },
+                                        "event_template": {
+                                            "label": "e",
+                                            "parameters": [
+                                                {
+                                                    "parameter_kind": "Expression",
+                                                    "parameter": "userId"
+                                                },
+                                                {
+                                                    "parameter_kind": "Capture",
+                                                    "parameter": {
+                                                        "variable_name": "eventDate",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                {
+                                                    "parameter_kind": "Capture",
+                                                    "parameter": {
+                                                        "variable_name": "eventId",
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            ],
+                                            "when": []
+                                        },
+                                        "guard": "",
+                                        "action": "{Code::formatting_data(data,window,eventDate)}",
+                                        "step": false,
+                                        "from_final_state_only": false
+                                    }
+                                ],
+                                "shallow_final_state_names": [
+                                    "S0"
+                                ],
+                                "deep_final_state_names": [],
+                                "initial_state_name": "S0"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "conf": []
+}
