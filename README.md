@@ -1,1 +1,1 @@
-# CaseStudy_pointAnomalyDetectionInDataStreamsUsingASTDs
+## Point Anomaly Detection In DataStreams Using ASTDs
