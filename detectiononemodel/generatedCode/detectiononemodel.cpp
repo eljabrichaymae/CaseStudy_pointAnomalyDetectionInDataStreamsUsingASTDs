@@ -116,37 +116,26 @@ int    e(int  _userId, std::string  eventDate, std::string  eventId)
 		{
 			if(ts_Unnamed1.f[ts_Unnamed1.userId].ts_Detector_instance.ts_training.autState == S0)
 			{
-				if(ts_Unnamed1.f[ts_Unnamed1.userId].ts_Detector_instance.ts_training.autState == S0)
-				{
-					ts_Unnamed1.f[ts_Unnamed1.userId].window->fit_partial(ts_Unnamed1.f[ts_Unnamed1.userId].ts_Detector_instance.detector,ts_Unnamed1.f[ts_Unnamed1.userId].data);
-					ts_Unnamed1.f[ts_Unnamed1.userId].ts_Detector_instance.ts_training.autState = S0;
-					exec = 1;
-				
-				}
+				ts_Unnamed1.f[ts_Unnamed1.userId].window->fit_partial(ts_Unnamed1.f[ts_Unnamed1.userId].ts_Detector_instance.detector,ts_Unnamed1.f[ts_Unnamed1.userId].data);
+				ts_Unnamed1.f[ts_Unnamed1.userId].ts_Detector_instance.ts_training.autState = S0;
+				exec = 1;	
 			
 			}
 			if(ts_Unnamed1.f[ts_Unnamed1.userId].ts_Detector_instance.ts_detection.autState == S0)
 			{
-				if(ts_Unnamed1.f[ts_Unnamed1.userId].ts_Detector_instance.ts_detection.autState == S0)
-				{
-					ts_Unnamed1.f[ts_Unnamed1.userId].ts_Detector_instance.detector->score_partial(eventDate,eventId,ts_Unnamed1.alerts);
-					ts_Unnamed1.f[ts_Unnamed1.userId].ts_Detector_instance.ts_detection.autState = S0;
-					exec = 1;
 				
-				}
+				ts_Unnamed1.f[ts_Unnamed1.userId].ts_Detector_instance.detector->score_partial(eventDate,eventId,ts_Unnamed1.alerts);
+				ts_Unnamed1.f[ts_Unnamed1.userId].ts_Detector_instance.ts_detection.autState = S0;
+				exec = 1;	
 			
 			}
 		
 		}
 		if(ts_Unnamed1.f[ts_Unnamed1.userId].ts_Data_Parser.autState == S0)
 		{
-			if(ts_Unnamed1.f[ts_Unnamed1.userId].ts_Data_Parser.autState == S0)
-			{
 				Code::formatting_data(ts_Unnamed1.f[ts_Unnamed1.userId].data,ts_Unnamed1.f[ts_Unnamed1.userId].window,eventDate);
 				ts_Unnamed1.f[ts_Unnamed1.userId].ts_Data_Parser.autState = S0;
 				exec = 1;
-			
-			}
 		
 		}
 	
