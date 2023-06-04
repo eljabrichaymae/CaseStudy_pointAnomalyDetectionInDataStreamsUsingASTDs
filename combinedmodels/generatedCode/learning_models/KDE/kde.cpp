@@ -64,9 +64,6 @@ void kde::training(std::vector<int> data){
         double* c_out2= reinterpret_cast<double*>(PyArray_DATA(np_ret2));
         std::vector<double> dataMiraculeuse(c_out2,c_out2+len);
         setData_post_training(dataMiraculeuse);
-        //json j_vec(getData_post_training());
-        //std::ofstream o("kde1106.json");
-        //o<<j_vec<<std::endl;
        
 };
 void kde::detection(std::string eventDate, std::string eventId, std::vector<int>& labels){
@@ -74,15 +71,12 @@ void kde::detection(std::string eventDate, std::string eventId, std::vector<int>
         int heure = stoi(eventDate.substr(12, 2));
         int minute = stoi(eventDate.substr(15, 2));
         int value = heure * 60 + minute;
-        //cout<< getData_post_training()[value]<<endl;
         if(getData_post_training()[value]< getThreshold()){
             this->alerts.push_back(eventId);
             labels.push_back(1);
         }else{
             labels.push_back(0);
         }
-        //json j_vec(getAlerts());
-        //std::ofstream o("alertskde.json");
     }
 };
 

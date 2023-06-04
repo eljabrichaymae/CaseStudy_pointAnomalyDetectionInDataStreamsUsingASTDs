@@ -85,7 +85,6 @@ void kmeans::training(std::vector<int> data){
     pFunc = PyObject_GetAttrString(pModule, (char*)"training");
     pArgs = PyTuple_Pack(1, result);
     pValue = PyObject_CallObject(pFunc, pArgs);
-    //std::cout<<*pValue<<std::endl;
     if (pValue == nullptr)
     {
         PyErr_Print();
@@ -97,28 +96,16 @@ void kmeans::training(std::vector<int> data){
     PyArrayObject *second_array = reinterpret_cast<PyArrayObject*>(second_obj);
     int first_len = PyArray_SHAPE(first_array)[0];
     int second_len = PyArray_SHAPE(second_array)[0];
-    //cout<<first_len<<endl;
-    //cout<<second_len<<endl;
     double *first_tab= reinterpret_cast<double*>(PyArray_DATA(first_array));
     double *second_tab= reinterpret_cast<double*>(PyArray_DATA(second_array));
     std::vector<double> pycenters(first_tab,first_tab+first_len);
-    //cout<<pycenters.size()<<endl;
     std::vector<double> pyStdvars(second_tab,second_tab+second_len);
     setStdvars(pyStdvars);
     setCenters(pycenters);
-    //
     Py_DECREF(pName);
     Py_DECREF(pModule);
     Py_DECREF(pFunc);
     Py_DECREF(pArgs);
-
-
-
-       // } catch(std::exception& ex) {
-        //std::cerr << "Exception caught: " << ex.what() << std::endl;
-        //} catch(...) {
-       //std::cerr << "Unknown exception caught" << std::endl;
-        //}
 
 };
 void kmeans::detection(std::string eventDate,std::string eventId, std::vector<int>& labels){
@@ -135,16 +122,13 @@ void kmeans::detection(std::string eventDate,std::string eventId, std::vector<in
         int index_val_cluster = it_score - distances.begin();
         double stdvar = this->stdvars[index_val_cluster];
         double zscore = *it_score/stdvar;
-        //cout<<zscore<<endl;
         if(abs(zscore) > getThreshold()){
             this->alerts.push_back(eventId);
             labels.push_back(1);
         }else{
             labels.push_back(0);
         }
-        //json j_vec(getAlerts());
-        //std::ofstream o("alertskmeans.json");
-        //o<<j_vec<<std::endl;
+
     }
 };
 kmeans::~kmeans(){

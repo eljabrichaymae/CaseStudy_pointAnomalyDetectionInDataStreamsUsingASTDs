@@ -71,7 +71,6 @@ using namespace std;
             PyErr_Print();
             std::exit(1);
         }
-        //PyObject_Print(pModule, stdout, 0);
         pFunc = PyObject_GetAttrString(pModule, (char*)"train");
         pArgs = PyTuple_Pack(2, result,PyLong_FromLong(getNumNeighbors()));
         pValue = PyObject_CallObject(pFunc, pArgs);
@@ -111,8 +110,6 @@ using namespace std;
             }else{
                 labels.push_back(0);
             }
-            //json j_vec(getAlerts());
-            //std::ofstream o("alertslof.json");
             Py_DECREF(pName);
             Py_DECREF(pModule);
             Py_DECREF(pFunc);
