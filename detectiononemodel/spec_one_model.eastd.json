@@ -1,0 +1,734 @@
+{
+    "iastd": {
+        "target": "c++",
+        "imports": [
+            "Code.cpp",
+            "window/window.h",
+            "KDE/kde.h"
+        ],
+        "type_definitions": {
+            "schemas": [],
+            "native_types": {
+                "window1": {
+                    "type_symbol": "window1",
+                    "destructor": "~window()"
+                },
+                "std::map<int,std::vector<int>>": {
+                    "type_symbol": "map",
+                    "destructor": "~map()"
+                },
+                "kde*": {
+                    "type_symbol": "KDE/kde.h",
+                    "destructor": "~kde()"
+                },
+                "double": {
+                    "type_symbol": "double",
+                    "destructor": "delete"
+                },
+                "json": {
+                    "type_symbol": "json",
+                    "destructor": "json"
+                },
+                "std::vector<tuple<string,string>>": {
+                    "type_symbol": "std::vector<tuple<string,string>>",
+                    "destructor": "~vector()"
+                }
+            },
+            "events": []
+        },
+        "top_level_astds": [
+            {
+                "name": "detectionOneModel",
+                "parameters": [
+                    {
+                        "name": "window_parameters",
+                        "type": "json",
+                        "domain": {
+                            "type": "UnboundedDomain"
+                        }
+                    },
+                    {
+                        "name": "threshold",
+                        "type": "double",
+                        "domain": {
+                            "type": "UnboundedDomain"
+                        }
+                    }
+                ],
+                "type": "QInterleave",
+                "invariant": "",
+                "typed_astd": {
+                    "attributes": [
+                        {
+                            "name": "alerts",
+                            "type": "std::vector<tuple<string,string>>",
+                            "initial_value": "{}"
+                        }
+                    ],
+                    "code": "",
+                    "interruptCode": "",
+                    "quantified_variable": {
+                        "name": "userId",
+                        "type": "int",
+                        "domain": {
+                            "type": "UnboundedDomain"
+                        }
+                    },
+                    "sub_astd": {
+                        "name": "Detection_Per_User",
+                        "type": "Flow",
+                        "invariant": "",
+                        "typed_astd": {
+                            "attributes": [
+                                {
+                                    "name": "sliding_window",
+                                    "type": "window*",
+                                    "initial_value": "new window1(window_parameters)"
+                                },
+                                {
+                                    "name": "data",
+                                    "type": "std::map<int,std::vector<int>>",
+                                    "initial_value": "{}"
+                                }
+                            ],
+                            "code": "",
+                            "interruptCode": "",
+                            "left_astd": {
+                                "name": "Detector_instance",
+                                "type": "Flow",
+                                "typed_astd": {
+                                    "attributes": [
+                                        {
+                                            "name": "detector",
+                                            "type": "kde*",
+                                            "initial_value": "new kde(threshold)"
+                                        }
+                                    ],
+                                    "code": "",
+                                    "interruptCode": "",
+                                    "left_astd": {
+                                        "name": "training",
+                                        "type": "Automaton",
+                                        "typed_astd": {
+                                            "attributes": [],
+                                            "code": "",
+                                            "interruptCode": "",
+                                            "states": [
+                                                {
+                                                    "name": "S0",
+                                                    "astd": {
+                                                        "type": "Elem",
+                                                        "typed_astd": {}
+                                                    },
+                                                    "entry_code": "",
+                                                    "stay_code": "",
+                                                    "exit_code": ""
+                                                }
+                                            ],
+                                            "transitions": [
+                                                {
+                                                    "arrow_type": "Local",
+                                                    "arrow": {
+                                                        "from_state_name": "S0",
+                                                        "to_state_name": "S0"
+                                                    },
+                                                    "event_template": {
+                                                        "label": "e",
+                                                        "parameters": [
+                                                            {
+                                                                "parameter_kind": "Expression",
+                                                                "parameter": "userId"
+                                                            },
+                                                            {
+                                                                "parameter_kind": "Capture",
+                                                                "parameter": {
+                                                                    "variable_name": "eventDate",
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            {
+                                                                "parameter_kind": "Capture",
+                                                                "parameter": {
+                                                                    "variable_name": "eventId",
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "when": []
+                                                    },
+                                                    "guard": "",
+                                                    "action": "{sliding_window->fit_partial(detector,data)}",
+                                                    "step": false,
+                                                    "from_final_state_only": false
+                                                }
+                                            ],
+                                            "shallow_final_state_names": [
+                                                "S0"
+                                            ],
+                                            "deep_final_state_names": [],
+                                            "initial_state_name": "S0"
+                                        }
+                                    },
+                                    "right_astd": {
+                                        "name": "scoring",
+                                        "type": "Automaton",
+                                        "typed_astd": {
+                                            "attributes": [],
+                                            "code": "",
+                                            "interruptCode": "",
+                                            "states": [
+                                                {
+                                                    "name": "S0",
+                                                    "astd": {
+                                                        "type": "Elem",
+                                                        "typed_astd": {}
+                                                    },
+                                                    "entry_code": "",
+                                                    "stay_code": "",
+                                                    "exit_code": ""
+                                                }
+                                            ],
+                                            "transitions": [
+                                                {
+                                                    "arrow_type": "Local",
+                                                    "arrow": {
+                                                        "from_state_name": "S0",
+                                                        "to_state_name": "S0"
+                                                    },
+                                                    "event_template": {
+                                                        "label": "e",
+                                                        "parameters": [
+                                                            {
+                                                                "parameter_kind": "Expression",
+                                                                "parameter": "userId"
+                                                            },
+                                                            {
+                                                                "parameter_kind": "Capture",
+                                                                "parameter": {
+                                                                    "variable_name": "eventDate",
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            {
+                                                                "parameter_kind": "Capture",
+                                                                "parameter": {
+                                                                    "variable_name": "eventId",
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "when": []
+                                                    },
+                                                    "guard": "",
+                                                    "action": "{detector->score_partial(eventDate,eventId,alerts)}",
+                                                    "step": false,
+                                                    "from_final_state_only": false
+                                                }
+                                            ],
+                                            "shallow_final_state_names": [
+                                                "S0"
+                                            ],
+                                            "deep_final_state_names": [],
+                                            "initial_state_name": "S0"
+                                        }
+                                    }
+                                }
+                            },
+                            "right_astd": {
+                                "name": "Data_Parser",
+                                "type": "Automaton",
+                                "typed_astd": {
+                                    "attributes": [],
+                                    "code": "",
+                                    "interruptCode": "",
+                                    "states": [
+                                        {
+                                            "name": "S0",
+                                            "astd": {
+                                                "type": "Elem",
+                                                "typed_astd": {}
+                                            },
+                                            "entry_code": "",
+                                            "stay_code": "",
+                                            "exit_code": ""
+                                        }
+                                    ],
+                                    "transitions": [
+                                        {
+                                            "arrow_type": "Local",
+                                            "arrow": {
+                                                "from_state_name": "S0",
+                                                "to_state_name": "S0"
+                                            },
+                                            "event_template": {
+                                                "label": "e",
+                                                "parameters": [
+                                                    {
+                                                        "parameter_kind": "Expression",
+                                                        "parameter": "userId"
+                                                    },
+                                                    {
+                                                        "parameter_kind": "Capture",
+                                                        "parameter": {
+                                                            "variable_name": "eventDate",
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    {
+                                                        "parameter_kind": "Capture",
+                                                        "parameter": {
+                                                            "variable_name": "eventId",
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                ],
+                                                "when": []
+                                            },
+                                            "guard": "",
+                                            "action": "{Code::formatting_data(data,sliding_window,eventDate)}",
+                                            "step": false,
+                                            "from_final_state_only": false
+                                        }
+                                    ],
+                                    "shallow_final_state_names": [
+                                        "S0"
+                                    ],
+                                    "deep_final_state_names": [],
+                                    "initial_state_name": "S0"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ],
+        "conf": []
+    },
+    "editor": {
+        "id": 130,
+        "schemas": [],
+        "native_types": [
+            {
+                "name": "window1",
+                "type": "native",
+                "id": "id_42",
+                "symbol": "window1",
+                "destructor": "~window()"
+            },
+            {
+                "name": "std::map<int,std::vector<int>>",
+                "type": "native",
+                "id": "id_43",
+                "symbol": "map",
+                "destructor": "~map()"
+            },
+            {
+                "name": "kde*",
+                "type": "native",
+                "id": "id_44",
+                "symbol": "KDE/kde.h",
+                "destructor": "~kde()"
+            },
+            {
+                "name": "double",
+                "type": "native",
+                "id": "id_68",
+                "symbol": "double",
+                "destructor": "delete"
+            },
+            {
+                "name": "json",
+                "type": "native",
+                "id": "id_104",
+                "symbol": "json",
+                "destructor": "json"
+            },
+            {
+                "name": "std::vector<tuple<string,string>>",
+                "type": "native",
+                "id": "id_112",
+                "symbol": "std::vector<tuple<string,string>>",
+                "destructor": "~vector()"
+            }
+        ],
+        "imports": [
+            {
+                "id": "id_120",
+                "path": "Code.cpp"
+            },
+            {
+                "id": "id_121",
+                "path": "window/window.h"
+            },
+            {
+                "id": "id_122",
+                "path": "KDE/kde.h"
+            }
+        ],
+        "eventSignatures": [],
+        "target": "C++",
+        "files": [
+            {
+                "astd": {
+                    "id": "id_1",
+                    "position": {
+                        "x": 10,
+                        "y": 2
+                    },
+                    "width": 876,
+                    "height": 323,
+                    "label": "detectionOneModel",
+                    "initial": false,
+                    "entryCode": "",
+                    "stayCode": "",
+                    "exitCode": "",
+                    "invariant": "",
+                    "comment": "",
+                    "class": "astd",
+                    "tabs": [
+                        {
+                            "id": "id_128",
+                            "label": "",
+                            "parent": "id_1",
+                            "attributes": [
+                                {
+                                    "parent": "id_128",
+                                    "label": "alerts",
+                                    "type": "std::vector<tuple<string,string>>",
+                                    "value": "{}"
+                                }
+                            ],
+                            "code": "",
+                            "interruptCode": "",
+                            "test": false,
+                            "parameter_name": "",
+                            "parameter_domain": "",
+                            "variable": {
+                                "parent": "id_128",
+                                "label": "userId",
+                                "type": "int",
+                                "domain": "",
+                                "domainType": "UnboundedDomain"
+                            },
+                            "class": "||| x : T"
+                        },
+                        {
+                            "id": "id_129",
+                            "label": "Detection_Per_User",
+                            "parent": "id_1",
+                            "attributes": [
+                                {
+                                    "parent": "id_129",
+                                    "label": "sliding_window",
+                                    "type": "window*",
+                                    "value": "new window1(window_parameters)"
+                                },
+                                {
+                                    "parent": "id_129",
+                                    "label": "data",
+                                    "type": "std::map<int,std::vector<int>>",
+                                    "value": "{}"
+                                }
+                            ],
+                            "code": "",
+                            "interruptCode": "",
+                            "test": false,
+                            "parameter_name": "",
+                            "parameter_domain": "",
+                            "invariant": "",
+                            "class": "Ψ Flow"
+                        }
+                    ],
+                    "state": "non-final",
+                    "orderNumber": "",
+                    "items": [
+                        {
+                            "id": "id_8",
+                            "parent": "id_1",
+                            "position": {
+                                "x": 284,
+                                "y": 35
+                            },
+                            "width": 550,
+                            "height": 268,
+                            "label": "Detector_instance",
+                            "initial": false,
+                            "entryCode": "",
+                            "stayCode": "",
+                            "exitCode": "",
+                            "class": "astd",
+                            "tabs": [
+                                {
+                                    "id": "id_126",
+                                    "label": "",
+                                    "parent": "id_8",
+                                    "attributes": [
+                                        {
+                                            "parent": "id_126",
+                                            "label": "detector",
+                                            "type": "kde*",
+                                            "value": "new kde(threshold)"
+                                        }
+                                    ],
+                                    "code": "",
+                                    "interruptCode": "",
+                                    "test": false,
+                                    "parameter_name": "",
+                                    "parameter_domain": "",
+                                    "class": "Ψ Flow"
+                                }
+                            ],
+                            "state": "non-final",
+                            "orderNumber": "",
+                            "items": [
+                                {
+                                    "id": "id_10",
+                                    "parent": "id_8",
+                                    "position": {
+                                        "x": 37,
+                                        "y": 36
+                                    },
+                                    "width": 180,
+                                    "height": 194,
+                                    "label": "training",
+                                    "initial": false,
+                                    "entryCode": "",
+                                    "stayCode": "",
+                                    "exitCode": "",
+                                    "class": "astd",
+                                    "tabs": [
+                                        {
+                                            "id": "id_125",
+                                            "label": "",
+                                            "parent": "id_10",
+                                            "attributes": [],
+                                            "code": "",
+                                            "interruptCode": "",
+                                            "test": false,
+                                            "parameter_name": "",
+                                            "parameter_domain": "",
+                                            "class": "Automaton"
+                                        }
+                                    ],
+                                    "state": "non-final",
+                                    "orderNumber": "",
+                                    "items": [
+                                        {
+                                            "id": "id_14",
+                                            "parent": "id_10",
+                                            "position": {
+                                                "x": 72,
+                                                "y": 124
+                                            },
+                                            "width": 30.72,
+                                            "height": 30,
+                                            "label": "S0",
+                                            "initial": true,
+                                            "entryCode": "",
+                                            "stayCode": "",
+                                            "exitCode": "",
+                                            "class": "state",
+                                            "final": true,
+                                            "history": false,
+                                            "deephistory": false
+                                        }
+                                    ],
+                                    "parameters": [],
+                                    "test_parameters": []
+                                },
+                                {
+                                    "id": "id_11",
+                                    "parent": "id_8",
+                                    "position": {
+                                        "x": 265,
+                                        "y": 32
+                                    },
+                                    "width": 247,
+                                    "height": 202,
+                                    "label": "scoring",
+                                    "initial": false,
+                                    "entryCode": "",
+                                    "stayCode": "",
+                                    "exitCode": "",
+                                    "class": "astd",
+                                    "tabs": [
+                                        {
+                                            "id": "id_124",
+                                            "label": "",
+                                            "parent": "id_11",
+                                            "attributes": [],
+                                            "code": "",
+                                            "interruptCode": "",
+                                            "test": false,
+                                            "parameter_name": "",
+                                            "parameter_domain": "",
+                                            "class": "Automaton"
+                                        }
+                                    ],
+                                    "state": "non-final",
+                                    "orderNumber": "",
+                                    "items": [
+                                        {
+                                            "id": "id_18",
+                                            "parent": "id_11",
+                                            "position": {
+                                                "x": 85,
+                                                "y": 123
+                                            },
+                                            "width": 30.72,
+                                            "height": 30,
+                                            "label": "S0",
+                                            "initial": true,
+                                            "entryCode": "",
+                                            "stayCode": "",
+                                            "exitCode": "",
+                                            "class": "state",
+                                            "final": true,
+                                            "history": false,
+                                            "deephistory": false
+                                        }
+                                    ],
+                                    "parameters": [],
+                                    "test_parameters": []
+                                }
+                            ],
+                            "parameters": [],
+                            "test_parameters": []
+                        },
+                        {
+                            "id": "id_4",
+                            "parent": "id_1",
+                            "position": {
+                                "x": 51,
+                                "y": 74
+                            },
+                            "width": 191,
+                            "height": 187,
+                            "label": "Data_Parser",
+                            "initial": false,
+                            "entryCode": "",
+                            "stayCode": "",
+                            "exitCode": "",
+                            "class": "astd",
+                            "tabs": [
+                                {
+                                    "id": "id_127",
+                                    "label": "",
+                                    "parent": "id_4",
+                                    "attributes": [],
+                                    "code": "",
+                                    "interruptCode": "",
+                                    "test": false,
+                                    "parameter_name": "",
+                                    "parameter_domain": "",
+                                    "class": "Automaton"
+                                }
+                            ],
+                            "state": "non-final",
+                            "orderNumber": "",
+                            "items": [
+                                {
+                                    "id": "id_6",
+                                    "parent": "id_4",
+                                    "position": {
+                                        "x": 81,
+                                        "y": 120
+                                    },
+                                    "width": 30,
+                                    "height": 32,
+                                    "label": "S0",
+                                    "initial": true,
+                                    "entryCode": "",
+                                    "stayCode": "",
+                                    "exitCode": "",
+                                    "class": "state",
+                                    "final": true,
+                                    "history": false,
+                                    "deephistory": false
+                                }
+                            ],
+                            "parameters": [],
+                            "test_parameters": []
+                        }
+                    ],
+                    "parameters": [
+                        {
+                            "parent": "id_1",
+                            "label": "window_parameters",
+                            "type": "json",
+                            "domain": "",
+                            "domainType": "UnboundedDomain"
+                        },
+                        {
+                            "parent": "id_1",
+                            "label": "threshold",
+                            "type": "double",
+                            "domain": "",
+                            "domainType": "UnboundedDomain"
+                        }
+                    ],
+                    "test_parameters": []
+                },
+                "links": [
+                    {
+                        "id": "id_7",
+                        "source": "id_6",
+                        "destination": "id_6",
+                        "details": true,
+                        "comment": "",
+                        "parameters": "userId,?eventDate:string,?eventId:string",
+                        "guard": "",
+                        "when": "",
+                        "displayNumber": "100",
+                        "code": "{Code::formatting_data(data,sliding_window,eventDate)}",
+                        "label": "e",
+                        "type": "default",
+                        "final": false,
+                        "inflexion": [],
+                        "test_parameters": [],
+                        "commentLabel": "",
+                        "parameterize": "[]"
+                    },
+                    {
+                        "id": "id_15",
+                        "source": "id_14",
+                        "destination": "id_14",
+                        "details": true,
+                        "parameters": "userId,?eventDate:string,?eventId:string",
+                        "guard": "",
+                        "when": "",
+                        "displayNumber": "100",
+                        "code": "{sliding_window->fit_partial(detector,data)}",
+                        "label": "e",
+                        "type": "default",
+                        "final": false,
+                        "inflexion": [],
+                        "test_parameters": [],
+                        "commentLabel": "",
+                        "parameterize": "[]"
+                    },
+                    {
+                        "id": "id_19",
+                        "source": "id_18",
+                        "destination": "id_18",
+                        "details": true,
+                        "parameters": "userId,?eventDate:string,?eventId:string",
+                        "guard": "",
+                        "when": "",
+                        "displayNumber": "100",
+                        "code": "{detector->score_partial(eventDate,eventId,alerts)}",
+                        "label": "e",
+                        "type": "default",
+                        "final": false,
+                        "inflexion": [],
+                        "test_parameters": [],
+                        "commentLabel": "",
+                        "parameterize": "[]"
+                    }
+                ]
+            }
+        ],
+        "traces": [],
+        "config": []
+    }
+}

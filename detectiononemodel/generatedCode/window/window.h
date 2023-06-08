@@ -6,7 +6,7 @@
 #include <memory>
 #include <map>
 #include "kde.h"
-#include "../nlohmann/json.hpp"
+#include "../json.hpp"
 
 using json = nlohmann::json;
 

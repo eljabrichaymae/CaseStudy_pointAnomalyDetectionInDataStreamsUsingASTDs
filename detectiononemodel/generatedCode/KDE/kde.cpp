@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <fstream>
 #include "kde.h"
-#include "../nlohmann/json.hpp"
+#include "../json.hpp"
 #include <Python.h>
 #include "numpy/arrayobject.h"
 
@@ -73,6 +73,7 @@ void kde::score_partial(std::string eventDate, std::string eventId, std::vector<
         int value = heure * 60 + minute;
         if(getData_post_training()[value] <= getThreshold()){
             alerts.push_back(make_tuple(eventId,eventDate));
+            std::cout<< eventId <<" is malicious"<<std::endl;
         }
     }
 };
