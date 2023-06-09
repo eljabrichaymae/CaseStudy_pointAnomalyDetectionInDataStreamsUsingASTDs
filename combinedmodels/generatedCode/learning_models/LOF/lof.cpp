@@ -5,7 +5,7 @@
 #include <fstream>
 #include <cstdlib>
 #include "lof.h"
-#include "../../nlohmann/json.hpp"
+#include "../../json.hpp"
 #include <Python.h>
 
 using json = nlohmann::json;
@@ -71,6 +71,7 @@ using namespace std;
             PyErr_Print();
             std::exit(1);
         }
+        //PyObject_Print(pModule, stdout, 0);
         pFunc = PyObject_GetAttrString(pModule, (char*)"train");
         pArgs = PyTuple_Pack(2, result,PyLong_FromLong(getNumNeighbors()));
         pValue = PyObject_CallObject(pFunc, pArgs);
@@ -84,7 +85,7 @@ using namespace std;
         
 
     };
-    void lof::detection(std::string eventDate,std::string eventId,std::vector<int>& labels){
+    void lof::score_partial(std::string eventDate,std::string eventId,std::vector<int>& labels){
         
         if(getPyModel() != NULL){
             int heure = stoi(eventDate.substr(12, 2));
@@ -110,6 +111,8 @@ using namespace std;
             }else{
                 labels.push_back(0);
             }
+            //json j_vec(getAlerts());
+            //std::ofstream o("alertslof.json");
             Py_DECREF(pName);
             Py_DECREF(pModule);
             Py_DECREF(pFunc);

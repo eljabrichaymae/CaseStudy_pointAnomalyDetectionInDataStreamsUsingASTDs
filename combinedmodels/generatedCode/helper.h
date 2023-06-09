@@ -5,22 +5,33 @@
 #include <vector>
 #include <map>
 #include <getopt.h>
-#include "nlohmann/json.hpp"
-
-using json = nlohmann::json;
+#include <stdexcept>
+#include "json.hpp"
+#include <stdexcept>
+#include <string>
+#include <iomanip>
 
 /*
  * @brief Regex expresssion used to parse
  *            event labels and parameters 
  */
-#define LABEL_REGEX std::string("([a-z_A-z]+[0-9]*)")
+#define LABEL_REGEX std::string("([0-9a-zA-Z*+_]*)")
 #define PARAMS_REGEX std::string(LABEL_REGEX + "\\((.*)\\)")
+#define SEPARATE_PARAMS_REGEX std::string("(\".*?\"|[^\",]+)(?=\\s*,|\\s*$)")
 /*
  * @brief Safely executes events by catching exceptions
  *     
  */
 #define ERROR_1 std::cout << "Event is not recognized" << "\n"
 #define ERROR_2 std::cout << "Event is not executable" << "\n"
+#define ERROR_5 std::cout << "Empty event label, terminating execution" << "\n"
+#define ERROR_6 std::cout << "Wrong parameters type given" << "\n";
+#define ERROR_7 std::cout << "Wrong number of parameters given" << "\n";
+/*
+ * @brief External json library to be used for JSON types (e.g. Packet, Flow, etc.)
+ *     
+ */
+using json = nlohmann::json;
 
 /*
  * @brief An object used to serialize types and get the appropriated values as of
@@ -30,21 +41,53 @@ class Types {
     
  public:
     
-    static std::string get_str(const std::string s) { return s; }
-    static int get_int(const std::string s) { return std::stoi(s); }
-    static float get_float(const std::string s) { return std::stof(s); }
-    static double get_double(const std::string s) { return std::stod(s); }
-    static bool get_bool(const std::string s) { return (s != "0") || (s != "false"); }
-    static json get_json(const std::string s){
+    static std::string get_str(const std::string s) { 
+        return s; 
+    }
+    static int get_int(const std::string s, bool& flag) {
+        std::istringstream iss(s);
+        int temp;
+        char c;
+        if (!(iss >> temp) || (iss.get(c))){
+            std::cerr << "Error: Failed to convert string to int: " << s << std::endl;
+            flag = true;
+            return 0;
+        }
+        return temp;
+    }
+    static float get_float(const std::string s, bool& flag) {
+        try {
+            return std::stof(s);
+        } catch(const std::exception& e) {
+            std::cerr << "Error: Failed to convert string to float: " << e.what() << std::endl;
+            flag = true;
+            return 0.0f; // Return only to allow program to continue
+        }
+    }
+    static double get_double(const std::string s, bool& flag) {
+        try {
+            return std::stod(s);
+        } catch(const std::exception& e) {
+            std::cerr << "Error: Failed to convert string to double: " << e.what() << std::endl;
+            flag = true;
+            return 0.0; // Return only to allow program to continue
+        }
+    }
+    static bool get_bool(const std::string s) { 
+        if(s == "0" || s == "false"){
+            return false;
+        }
+        return true;
+    }static json get_json(const std::string s,  bool& flag){
         std::ifstream file(s);
         if (!file.is_open()) {
             std::cerr << "Failed to open file: " << s << std::endl;
+            flag = true;
         }
         json jsonData;
         file >> jsonData;
         return jsonData;
     }
-
 };
 
 /*
@@ -78,18 +121,23 @@ public:
      * @param The input regex to be used for parsing
      * @return 
      */
-    static void get_event_params(Event& e, const std::string in, const std::regex regex) 
+    static void get_event_params(Event& e, const std::string in) 
     {
         std::smatch matches;
-        if(regex_search(in, matches, regex)) 
+        std::smatch matches2;
+        if(regex_search(in, matches, std::regex(PARAMS_REGEX))) 
         {
-            std::stringstream ss(matches.str(2));
-	    while(ss.good()) 
-	    { 
-	        std::string it; 
-	        getline(ss, it, ',');
-	        e.params.push_back(it); 
-	    }
+            std::string ss = matches.str(2);
+	        while(regex_search(ss, matches2, std::regex(SEPARATE_PARAMS_REGEX))){
+                std::string input = matches2[0];
+                std::stringstream ss2(input);
+
+                std::string output;
+                ss2 >> std::quoted(output);
+
+                e.params.push_back(output);
+                ss = matches2.suffix().str();
+            }
         }
   
         return;   
@@ -123,7 +171,7 @@ public:
             {"window_parameters", required_argument, nullptr, '1'},
             {"kde_parameters", required_argument, nullptr, '2'},
             {"kmeans_parameters", required_argument, nullptr, '3'},
-            {"lof_parameters", required_argument, nullptr, '4'}
+            {"lof_parameters", required_argument, nullptr, '4'},
         };
 
         while (true)
@@ -143,32 +191,61 @@ public:
                     std::cout << "Error opening event file !!!";
                 break;
              }
-             case '1': 
-                 window_parameters = Types::get_json(optarg); 
-                 break;
-             case '2': 
-                 kde_parameters = Types::get_double(optarg); 
-                 break;
-
-             case '3': 
-                 kmeans_parameters = Types::get_double(optarg); 
-                 break;
-             case '4': 
-                 lof_parameters = Types::get_int(optarg); 
-                 break;
              
+             case '1': 
+             {
+                 
+                 bool flag = false;
+                 window_parameters = Types::get_json(optarg, flag);  
+                 if(flag){
+                      ERROR_6;
+                 }
+                 break;
+             }
+             case '2': 
+             {
+                 
+                 bool flag = false;
+                 kde_parameters = Types::get_double(optarg, flag);  
+                 if(flag){
+                      ERROR_6;
+                 }
+                 break;
+             }
+             case '3': 
+             {
+                 
+                 bool flag = false;
+                 kmeans_parameters = Types::get_double(optarg, flag);  
+                 if(flag){
+                      ERROR_6;
+                 }
+                 break;
+             }
+             case '4': 
+             {
+                 
+                 bool flag = false;
+                 lof_parameters = Types::get_int(optarg, flag);  
+                 if(flag){
+                      ERROR_6;
+                 }
+                 break;
+             }
              case 'h':
              { 
                  std::cout << "This program has been compiled by cASTD." << "\n";
-                 std::cout << "./my_program [-i <event file>]  [-h]" << "\n";
+                 std::cout << "./my_program [-i <event file>] [-window_parameters <value>] [-kde_parameters <value>] [-kmeans_parameters <value>] [-lof_parameters <value>]  [-h]" << "\n";
                  std::cout << "[OPTIONS]     								     " << "\n";
                  std::cout << "   -i <event  file>  Read an event file in Shorthand format." << "\n";
                  std::cout << "                     If an event file is not given, it runs in interactive" << "\n";
                  std::cout << "                     mode from command line" << "\n";
-                 std::cout << "   -window_parameters <value> Parameter of the ASTD" << std::endl;
-                 std::cout << "   -kde_parameters <value> Parameter of the ASTD" << std::endl;
-                 std::cout << "   -kmeans_parameters <value> Parameter of the ASTD" << std::endl;
-                 std::cout << "   -lof_parameters <value> Parameter of the ASTD" << std::endl;
+                    std::cout << "   -window_parameters <value> Parameter of the ASTD" << std::endl;
+                    std::cout << "   -kde_parameters <value> Parameter of the ASTD" << std::endl;
+                    std::cout << "   -kmeans_parameters <value> Parameter of the ASTD" << std::endl;
+                    std::cout << "   -lof_parameters <value> Parameter of the ASTD" << std::endl;
+                 
+                 
                  
                  std::cout << "   -h                Show this help" << "\n";
                  exit(0);
@@ -188,18 +265,17 @@ public:
         if(argc > 1) 
         {
             if(!filename.empty()) 
-	        std::getline(channel, input); 
-	    else 
-	        std::getline(std::cin, input); 
-
-	    e.label = get_event_label(input);
-	    get_event_params(e, input, std::regex(PARAMS_REGEX));  
+	            std::getline(channel, input); 
+	        else 
+	            std::getline(std::cin, input);
+    	    e.label = get_event_label(input);
+	        get_event_params(e, input);  
         }
         else 
         {
             getline(std::cin, input);
             e.label = get_event_label(input);
-            get_event_params(e, input, std::regex(PARAMS_REGEX));
+            get_event_params(e, input);
         }
      
         return e;

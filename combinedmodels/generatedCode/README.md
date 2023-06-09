@@ -1,3 +1,11 @@
+## Dependencies
+
+- pyclustering
+- numpy
+- scipy
+- sklearn
+- c++14
+
 ## Compilation
 
 ```console

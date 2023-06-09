@@ -8,7 +8,7 @@
 #include <Python.h>
 #include "numpy/arrayobject.h"                  
 #include <cmath>
-#include "../../nlohmann/json.hpp"
+#include "../../json.hpp"
 
 
 using json = nlohmann::json;
@@ -85,6 +85,7 @@ void kmeans::training(std::vector<int> data){
     pFunc = PyObject_GetAttrString(pModule, (char*)"training");
     pArgs = PyTuple_Pack(1, result);
     pValue = PyObject_CallObject(pFunc, pArgs);
+    //std::cout<<*pValue<<std::endl;
     if (pValue == nullptr)
     {
         PyErr_Print();
@@ -108,7 +109,7 @@ void kmeans::training(std::vector<int> data){
     Py_DECREF(pArgs);
 
 };
-void kmeans::detection(std::string eventDate,std::string eventId, std::vector<int>& labels){
+void kmeans::score_partial(std::string eventDate,std::string eventId, std::vector<int>& labels){
     if(getCenters().size()!=0){
         int heure = stoi(eventDate.substr(12, 2));
         int minute = stoi(eventDate.substr(15, 2));
@@ -128,7 +129,6 @@ void kmeans::detection(std::string eventDate,std::string eventId, std::vector<in
         }else{
             labels.push_back(0);
         }
-
     }
 };
 kmeans::~kmeans(){

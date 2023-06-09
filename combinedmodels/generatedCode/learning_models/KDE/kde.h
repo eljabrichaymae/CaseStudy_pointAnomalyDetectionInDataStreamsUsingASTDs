@@ -22,7 +22,7 @@ class kde : public model {
         double getThreshold();
         std::vector<std::string> getAlerts();
         void training(std::vector<int> data);
-        void detection(std::string,std::string,std::vector<int>&);
+        void score_partial(std::string,std::string,std::vector<int>&);
         ~kde();
 };
 

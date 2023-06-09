@@ -3,7 +3,7 @@
 #include <iterator>
 #include <iomanip>
 #include <fstream>
-#include "../../nlohmann/json.hpp"
+#include "../../json.hpp"
 #include "kde.h"
 #include <Python.h>
 #include "numpy/arrayobject.h"
@@ -66,7 +66,7 @@ void kde::training(std::vector<int> data){
         setData_post_training(dataMiraculeuse);
        
 };
-void kde::detection(std::string eventDate, std::string eventId, std::vector<int>& labels){
+void kde::score_partial(std::string eventDate, std::string eventId, std::vector<int>& labels){
     if(getData_post_training().size()!=0){
         int heure = stoi(eventDate.substr(12, 2));
         int minute = stoi(eventDate.substr(15, 2));

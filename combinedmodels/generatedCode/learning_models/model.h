@@ -10,7 +10,7 @@ using namespace std;
 class model {
    public: 
     virtual void training(vector<int> data)=0;
-    virtual void detection(std::string,std::string,std::vector<int>&)=0;
+    virtual void score_partial(std::string,std::string,std::vector<int>&)=0;
     virtual ~model() = default;
 };
 #endif 

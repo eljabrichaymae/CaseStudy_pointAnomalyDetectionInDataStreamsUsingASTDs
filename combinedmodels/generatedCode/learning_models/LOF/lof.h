@@ -33,7 +33,7 @@ class lof : public model{
         std::vector<std::string> getAlerts();
         void setAlerts(std::vector<std::string>);
         void training(std::vector<int> data);
-        void detection(std::string,std::string,std::vector<int>&); 
+        void score_partial(std::string,std::string,std::vector<int>&); 
 
 };
 
