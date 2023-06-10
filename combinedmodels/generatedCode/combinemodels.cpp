@@ -4,6 +4,7 @@
 #include "learning_models/LOF/lof.h"
 #include "learning_models/model.h"
 #include "helper.h"
+#include <Python.h>
 enum AutState
 {
   S0
